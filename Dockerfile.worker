@@ -50,7 +50,7 @@ RUN apk --update add \
     docker-php-ext-install gd && \
     docker-php-ext-enable redis && \
     rm -rf /tmp/pear && \
-    rm /var/cache/apk/* &&
+    rm /var/cache/apk/*
 
 WORKDIR /var/www/html
 
