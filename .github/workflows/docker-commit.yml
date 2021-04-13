@@ -1,4 +1,4 @@
-name: Docker
+name: Docker Commit
 
 on:
   push:
@@ -14,7 +14,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Commit (PHP-FPM)
+    name: Tag Commit (PHP-FPM, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 7.4-fpm-alpine
+          - 8.0-fpm-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -37,15 +43,25 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:${{ github.sha }}-8.0-fpm-alpine
+          tags: renokico/laravel-base:${{ github.sha }}-${{ matrix.base-tag }}
           file: Dockerfile.fpm
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
 
   octane_push:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Commit (Octane)
+    name: Tag Commit (Octane, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 4.6-php8.0-alpine
+          - 4.5-php8.0-alpine
+          - 4.6-php7.4-alpine
+          - 4.5-php7.4-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -68,15 +84,23 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:octane-${{ github.sha }}-php8.0-alpine
+          tags: renokico/laravel-base:octane-${{ github.sha }}-${{ matrix.base-tag }}
           file: Dockerfile.octane
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
 
   worker_push:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Commit (Worker)
+    name: Tag Commit (Worker, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 8.0-cli-alpine
+          - 7.4-cli-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -99,5 +123,7 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:worker-${{ github.sha }}-8.0-cli-alpine
+          tags: renokico/laravel-base:worker-${{ github.sha }}-${{ matrix.base-tag }}
           file: Dockerfile.worker
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}

@@ -1,4 +1,4 @@
-name: Docker
+name: Docker Release
 
 on:
   push:
@@ -11,7 +11,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Release (PHP-FPM)
+    name: Tag Release (PHP-FPM, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 7.4-fpm-alpine
+          - 8.0-fpm-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -22,8 +28,8 @@ jobs:
         with:
           images: renokico/laravel-base
           tags: |
-            type=semver,pattern={{version}}-8.0-fpm-alpine
-            type=semver,pattern={{major}}.{{minor}}-8.0-fpm-alpine
+            type=semver,pattern={{version}}-${{ matrix.base-tag }}
+            type=semver,pattern={{major}}.{{minor}}-${{ matrix.base-tag }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -46,13 +52,23 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.fpm
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
 
   push_octane:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Release (Octane)
+    name: Tag Release (Octane, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 4.6-php8.0-alpine
+          - 4.5-php8.0-alpine
+          - 4.6-php7.4-alpine
+          - 4.5-php7.4-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -63,8 +79,8 @@ jobs:
         with:
           images: renokico/laravel-base
           tags: |
-            type=semver,pattern=octane-{{version}}-php8.0-alpine
-            type=semver,pattern=octane-{{major}}.{{minor}}-php8.0-alpine
+            type=semver,pattern=octane-{{version}}-${{ matrix.base-tag }}
+            type=semver,pattern=octane-{{major}}.{{minor}}-${{ matrix.base-tag }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -87,13 +103,21 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.octane
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
 
   push_worker:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Release (Worker)
+    name: Tag Release (Worker, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 8.0-cli-alpine
+          - 7.4-cli-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -104,8 +128,8 @@ jobs:
         with:
           images: renokico/laravel-base
           tags: |
-            type=semver,pattern=worker-{{version}}-8.0-cli-alpine
-            type=semver,pattern=worker-{{major}}.{{minor}}-8.0-cli-alpine
+            type=semver,pattern=worker-{{version}}-${{ matrix.base-tag }}
+            type=semver,pattern=worker-{{major}}.{{minor}}-${{ matrix.base-tag }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -128,3 +152,5 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.worker
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}

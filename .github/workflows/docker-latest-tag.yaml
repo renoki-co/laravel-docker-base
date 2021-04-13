@@ -1,4 +1,4 @@
-name: Docker
+name: Docker Latest
 
 on:
   push:
@@ -11,7 +11,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Latest (PHP-FPM)
+    name: Tag Latest (PHP-FPM, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 7.4-fpm-alpine
+          - 8.0-fpm-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -34,16 +40,25 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:latest-8.0-fpm-alpine
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: renokico/laravel-base:latest-${{ matrix.base-tag }}
           file: Dockerfile.fpm
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
 
   push_octane:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Latest (Octane)
+    name: Tag Latest (Octane, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 4.6-php8.0-alpine
+          - 4.5-php8.0-alpine
+          - 4.6-php7.4-alpine
+          - 4.5-php7.4-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -66,16 +81,23 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:octane-latest-php8.0-alpine
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: renokico/laravel-base:octane-latest-${{ matrix.base-tag }}
           file: Dockerfile.octane
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
 
   push_worker:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Latest (Worker)
+    name: Tag Latest (Worker, ${{ matrix.base-tag }})
+
+    strategy:
+      matrix:
+        base-tag:
+          - 8.0-cli-alpine
+          - 7.4-cli-alpine
 
     steps:
       - uses: actions/checkout@v2
@@ -98,6 +120,7 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:worker-latest-8.0-cli-alpine
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: renokico/laravel-base:worker-latest-${{ matrix.base-tag }}
           file: Dockerfile.worker
+          build-args: |
+            BASE_TAG=${{ matrix.base-tag }}
