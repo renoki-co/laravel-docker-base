@@ -1,0 +1,103 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  fpm_push:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+
+    runs-on: ubuntu-latest
+
+    name: Tag Commit (PHP-FPM)
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: .
+          tags: renokico/laravel-base:${{ github.sha }}-8.0-fpm-alpine
+          file: Dockerfile.fpm
+
+  octane_push:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+
+    runs-on: ubuntu-latest
+
+    name: Tag Commit (Octane)
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: .
+          tags: renokico/laravel-base:octane-${{ github.sha }}-php8.0-alpine
+          file: Dockerfile.octane
+
+  worker_push:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+
+    runs-on: ubuntu-latest
+
+    name: Tag Commit (Worker)
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: .
+          tags: renokico/laravel-base:worker-${{ github.sha }}-8.0-cli-alpine
+          file: Dockerfile.worker
