@@ -10,6 +10,8 @@ Already-compiled PHP-based Images to use when deploying your Laravel application
 
 Images are used to deploy a [sample Laravel application](https://github.com/renoki-co/laravel-helm-demo) to Kubernetes using Helm charts for vanilla Laravel, Laravel Octane or to deploy workers such as queues.
 
+For Docker & versioning examples, please check [`renokico/laravel-base` DockerHub page](https://hub.docker.com/r/renokico/laravel-base).
+
 This project compiles images:
 
 - for PHP-FPM + NGINX projects, using `Dockerfile.fpm`, based on an official PHP-FPM Docker image
