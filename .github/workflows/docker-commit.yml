@@ -60,8 +60,6 @@ jobs:
         base-tag:
           - 4.6-php8.0-alpine
           - 4.5-php8.0-alpine
-          - 4.6-php7.4-alpine
-          - 4.5-php7.4-alpine
 
     steps:
       - uses: actions/checkout@v2
