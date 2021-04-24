@@ -16,7 +16,7 @@ This project compiles images:
 - for Octane, using `Dockerfile.octane`, based on [a PHP, Swoole-ready image](https://hub.docker.com/r/phpswoole/swoole)
 - for Workers, like CLI commands, using `Dockerfile.worker`, based on an official PHP CLI Docker image
 
-These images can be used to compile your app code in a PHP-ready container to be used in Kubernetes:
+These images can be used to compile your app code in a PHP-ready container to be used in Kubernetes.
 
 ## ⛽ Octane
 
