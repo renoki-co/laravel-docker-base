@@ -24,7 +24,7 @@ jobs:
 
       - name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v3.1.0
+        uses: docker/metadata-action@v3.1.0
         with:
           images: renokico/laravel-base
           tags: |
@@ -73,7 +73,7 @@ jobs:
 
       - name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v3.1.0
+        uses: docker/metadata-action@v3.1.0
         with:
           images: renokico/laravel-base
           tags: |
@@ -122,7 +122,7 @@ jobs:
 
       - name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v3.1.0
+        uses: docker/metadata-action@v3.1.0
         with:
           images: renokico/laravel-base
           tags: |
