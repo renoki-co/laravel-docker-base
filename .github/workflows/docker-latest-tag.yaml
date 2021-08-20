@@ -28,11 +28,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to Quay
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: quay.io
+          username: ${{ secrets.DOCKER_REPOSITORY_USERNAME }}
+          password: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
 
       - name: Build and push
         id: docker
@@ -40,7 +41,7 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:latest-${{ matrix.base-tag }}
+          tags: quay.io/renokico/laravel-base:latest-${{ matrix.base-tag }}
           file: Dockerfile.fpm
           build-args: |
             BASE_TAG=${{ matrix.base-tag }}
@@ -67,11 +68,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to Quay
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: quay.io
+          username: ${{ secrets.DOCKER_REPOSITORY_USERNAME }}
+          password: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
 
       - name: Build and push
         id: docker
@@ -79,7 +81,7 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:octane-latest-${{ matrix.base-tag }}
+          tags: quay.io/renokico/laravel-base:octane-latest-${{ matrix.base-tag }}
           file: Dockerfile.octane
           build-args: |
             BASE_TAG=${{ matrix.base-tag }}
@@ -106,11 +108,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to Quay
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: quay.io
+          username: ${{ secrets.DOCKER_REPOSITORY_USERNAME }}
+          password: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
 
       - name: Build and push
         id: docker
@@ -118,7 +121,7 @@ jobs:
         with:
           push: true
           context: .
-          tags: renokico/laravel-base:worker-latest-${{ matrix.base-tag }}
+          tags: quay.io/renokico/laravel-base:worker-latest-${{ matrix.base-tag }}
           file: Dockerfile.worker
           build-args: |
             BASE_TAG=${{ matrix.base-tag }}

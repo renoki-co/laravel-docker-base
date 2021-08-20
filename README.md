@@ -11,7 +11,7 @@ Already-compiled PHP-based Images to use when deploying your Laravel application
 
 Images are used to deploy a [sample Laravel application](https://github.com/renoki-co/laravel-helm-demo) to Kubernetes using Helm charts for vanilla Laravel, Laravel Octane or to deploy workers such as queues.
 
-For Docker & versioning examples, please check [`renokico/laravel-base` DockerHub page](https://hub.docker.com/r/renokico/laravel-base).
+For Docker & versioning examples, please check [`renokico/laravel-base` Quay page](https://quay.io/repository/renokico/laravel-base).
 
 This project compiles images:
 
@@ -34,7 +34,7 @@ You will sometimes get exclusive content on tips about Laravel, AWS or Kubernete
 Octane images are based on [a PHP-Swoole image](https://hub.docker.com/r/phpswoole/swoole) that works directly with Octane in Swoole mode.
 
 ```Dockerfile
-FROM renokico/laravel-base:octane-latest-php8.0-alpine
+FROM quay.io/renokico/laravel-base:octane-latest-php8.0-alpine
 
 COPY . /var/www/html
 
@@ -53,7 +53,7 @@ EXPOSE 80
 The PHP-FPM image contains the PHP-FPM process and will be complemented by NGINX in the Helm chart.
 
 ```Dockerfile
-FROM renokico/laravel-base:latest-8.0-fpm-alpine
+FROM quay.io/renokico/laravel-base:latest-8.0-fpm-alpine
 
 COPY . /var/www/html
 
@@ -68,7 +68,7 @@ WORKDIR /var/www/html
 Workers can be either long-running processes that serve as workers (for example, queues) or by running a local process that might also expose a HTTP server, etc. Either way, you can use a Worker to extend your project.
 
 ```Dockerfile
-FROM renokico/laravel-base:worker-latest-8.0-cli-alpine
+FROM quay.io/renokico/laravel-base:worker-latest-8.0-cli-alpine
 
 COPY . /var/www/html
 
