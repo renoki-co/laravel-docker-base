@@ -66,6 +66,7 @@ jobs:
     strategy:
       matrix:
         base-tag:
+          - 4.7-php8.0-alpine
           - 4.6-php8.0-alpine
           - 4.5-php8.0-alpine
 
