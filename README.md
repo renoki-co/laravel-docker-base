@@ -6,6 +6,7 @@ Laravel Docker Images
   - [⛽ Octane](#-octane)
   - [🖥 PHP-FPM](#-php-fpm)
   - [🤖 Workers](#-workers)
+  - [Scaling Horizon & Octane](#-scaling-horizon-octane)
 
 Already-compiled PHP-based Images to use when deploying your Laravel application to Kubernetes using Laravel Helm charts.
 
@@ -79,3 +80,12 @@ WORKDIR /var/www/html
 
 ENTRYPOINT ["php", "-a"]
 ```
+
+## Scaling Horizon & Octane
+
+It is well known that for Kubernetes, you may scale based on CPU or memory allocated to each pod. But you can also scale based on Prometheus metrics.
+
+For ease of access, you may use the following exporters for your Laravel application:
+
+- [Laravel Horizon Exporter](https://github.com/renoki-co/horizon-exporter) - used to scale application pods that run the queue workers
+- [Laravel Octane Exporter](https://github.com/renoki-co/octane-exporter) - used to scale the Octane pods to ensure better parallelization
