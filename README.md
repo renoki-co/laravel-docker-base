@@ -3,11 +3,22 @@ Laravel Docker Images
 
 - [Laravel Docker Images](#laravel-docker-images)
   - [🤝 Supporting](#-supporting)
+  - [🚀 Getting Started](#-getting-started)
   - [⛽ Octane](#-octane)
   - [🖥 PHP-FPM](#-php-fpm)
   - [🤖 Workers](#-workers)
 
 Already-compiled PHP-based Images to use when deploying your Laravel application to Kubernetes using Laravel Helm charts.
+
+## 🤝 Supporting
+
+[<img src="https://github-content.s3.fr-par.scw.cloud/static/32.jpg" height="210" width="418" />](https://github-content.renoki.org/github-repo/32)
+
+If you are using one or more Renoki Co. open-source packages in your production apps, in presentation demos, hobby projects, school projects or so, spread some kind words about our work or sponsor our work via Patreon. 📦
+
+[<img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" height="41" width="175" />](https://www.patreon.com/bePatron?u=10965171)
+
+## 🚀 Getting Started
 
 Images are used to deploy a [sample Laravel application](https://github.com/renoki-co/laravel-helm-demo) to Kubernetes using Helm charts for vanilla Laravel, Laravel Octane or to deploy workers such as queues.
 
@@ -20,14 +31,6 @@ This project compiles images:
 - for Workers, like CLI commands, using `Dockerfile.worker`, based on an official PHP CLI Docker image
 
 These images can be used to compile your app code in a PHP-ready container to be used in Kubernetes.
-
-## 🤝 Supporting
-
-If you are using one or more Renoki Co. open-source packages in your production apps, in presentation demos, hobby projects, school projects or so, spread some kind words about our work or sponsor our work via Patreon. 📦
-
-You will sometimes get exclusive content on tips about Laravel, AWS or Kubernetes on Patreon and some early-access to projects or packages.
-
-[<img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" height="41" width="175" />](https://www.patreon.com/bePatron?u=10965171)
 
 ## ⛽ Octane
 
