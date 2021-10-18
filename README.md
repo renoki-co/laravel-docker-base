@@ -6,7 +6,7 @@ Laravel Docker Images
   - [⛽ Octane](#-octane)
   - [🖥 PHP-FPM](#-php-fpm)
   - [🤖 Workers](#-workers)
-  - [Scaling Horizon & Octane](#-scaling-horizon-octane)
+  - [Scaling Horizon & Octane](#scaling-horizon--octane)
 
 Already-compiled PHP-based Images to use when deploying your Laravel application to Kubernetes using Laravel Helm charts.
 
