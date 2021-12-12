@@ -61,8 +61,8 @@ jobs:
           - 4.7-php8.0-alpine
           - 4.6-php8.0-alpine
           - 4.8-php8.1-alpine
-          - 4.7-php8.1-alpine
-          - 4.6-php8.1-alpine
+          # - 4.7-php8.1-alpine
+          # - 4.6-php8.1-alpine
 
     steps:
       - uses: actions/checkout@v2
