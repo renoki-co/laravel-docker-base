@@ -1,4 +1,4 @@
-ARG BASE_TAG=8.0-cli-alpine
+ARG BASE_TAG=8.1-cli-alpine
 
 FROM php:$BASE_TAG
 
