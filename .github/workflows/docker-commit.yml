@@ -17,6 +17,7 @@ jobs:
     name: Tag Commit (PHP-FPM, ${{ matrix.base-tag }})
 
     strategy:
+      fail-fast: false
       matrix:
         base-tag:
           - 7.4-fpm-alpine
