@@ -20,7 +20,7 @@ jobs:
           - 8.0-fpm-alpine
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker meta
         id: docker_meta
@@ -71,7 +71,7 @@ jobs:
           - 4.5-php8.0-alpine
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker meta
         id: docker_meta
@@ -121,7 +121,7 @@ jobs:
           - 7.4-cli-alpine
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker meta
         id: docker_meta
