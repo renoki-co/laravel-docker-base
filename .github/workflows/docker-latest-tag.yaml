@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push
         id: docker
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           push: true
           context: .
@@ -78,7 +78,7 @@ jobs:
 
       - name: Build and push
         id: docker
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           push: true
           context: .
@@ -118,7 +118,7 @@ jobs:
 
       - name: Build and push
         id: docker
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           push: true
           context: .
