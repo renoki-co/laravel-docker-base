@@ -35,7 +35,6 @@ RUN apk --update add \
         mbstring \
         pdo \
         pdo_mysql \
-        tokenizer \
         xml \
         pcntl \
         bcmath \
