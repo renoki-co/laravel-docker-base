@@ -1,4 +1,4 @@
-ARG BASE_TAG=8.0-cli-alpine
+ARG BASE_TAG=8.1-cli-alpine
 
 FROM php:$BASE_TAG
 
@@ -35,7 +35,6 @@ RUN apk --update add \
         mbstring \
         pdo \
         pdo_mysql \
-        tokenizer \
         xml \
         pcntl \
         bcmath \

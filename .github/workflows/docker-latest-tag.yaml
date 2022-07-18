@@ -14,10 +14,12 @@ jobs:
     name: Tag Latest (PHP-FPM, ${{ matrix.base-tag }})
 
     strategy:
+      fail-fast: false
       matrix:
         base-tag:
           - 7.4-fpm-alpine
           - 8.0-fpm-alpine
+          - 8.1-fpm-alpine
 
     steps:
       - uses: actions/checkout@v3
@@ -54,11 +56,15 @@ jobs:
     name: Tag Latest (Octane, ${{ matrix.base-tag }})
 
     strategy:
+      fail-fast: false
       matrix:
         base-tag:
+          - 4.8-php8.0-alpine
           - 4.7-php8.0-alpine
           - 4.6-php8.0-alpine
-          - 4.5-php8.0-alpine
+          - 4.8-php8.1-alpine
+          # - 4.7-php8.1-alpine
+          # - 4.6-php8.1-alpine
 
     steps:
       - uses: actions/checkout@v3
@@ -95,8 +101,10 @@ jobs:
     name: Tag Latest (Worker, ${{ matrix.base-tag }})
 
     strategy:
+      fail-fast: false
       matrix:
         base-tag:
+          - 8.1-cli-alpine
           - 8.0-cli-alpine
           - 7.4-cli-alpine
 

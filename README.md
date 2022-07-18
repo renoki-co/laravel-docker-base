@@ -36,7 +36,7 @@ These images can be used to compile your app code in a PHP-ready container to be
 Octane images are based on [a PHP-Swoole image](https://hub.docker.com/r/phpswoole/swoole) that works directly with Octane in Swoole mode.
 
 ```Dockerfile
-FROM quay.io/renokico/laravel-base:octane-latest-php8.0-alpine
+FROM quay.io/renokico/laravel-base:octane-latest-php8.1-alpine
 
 COPY . /var/www/html
 
@@ -55,7 +55,7 @@ EXPOSE 80
 The PHP-FPM image contains the PHP-FPM process and will be complemented by NGINX in the Helm chart.
 
 ```Dockerfile
-FROM quay.io/renokico/laravel-base:latest-8.0-fpm-alpine
+FROM quay.io/renokico/laravel-base:latest-8.1-fpm-alpine
 
 COPY . /var/www/html
 
@@ -70,7 +70,7 @@ WORKDIR /var/www/html
 Workers can be either long-running processes that serve as workers (for example, queues) or by running a local process that might also expose a HTTP server, etc. Either way, you can use a Worker to extend your project.
 
 ```Dockerfile
-FROM quay.io/renokico/laravel-base:worker-latest-8.0-cli-alpine
+FROM quay.io/renokico/laravel-base:worker-latest-8.1-cli-alpine
 
 COPY . /var/www/html
 
