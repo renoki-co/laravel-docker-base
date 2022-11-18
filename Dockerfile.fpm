@@ -49,19 +49,8 @@ RUN apk --update --no-cache add \
         xml \
         xsl \
         zip ; \
-    rm -rf /tmp/* \
-        /usr/local/bin/phpdbg \
-        /usr/local/bin/php-cgi \
-        /usr/src/php.tar* \
-        /usr/includes/* \
-        /usr/share/man/* \
-        /var/cache/apk/* \
-        /var/tmp/* ; \
-    apk del --purge .phpize-deps ; \
-    apk del --purge build-base ; \
-    apk del --purge ${PHPIZE_DEPS} ; \
-    docker-php-source delete ; \
     ln -sf $(which composer.phar) $(which composer) ; \
-    chmod +x /usr/local/bin/docker-php-cleanup
+    chmod +x /usr/local/bin/docker-php-cleanup ; \
+    sh /usr/local/bin/docker-php-cleanup
 
 WORKDIR /var/www/html
