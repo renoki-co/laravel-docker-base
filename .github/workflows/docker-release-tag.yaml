@@ -17,9 +17,8 @@ jobs:
       fail-fast: false
       matrix:
         base-tag:
-          - 7.4-fpm-alpine
-          - 8.0-fpm-alpine
           - 8.1-fpm-alpine
+          - 8.0-fpm-alpine
 
     steps:
       - uses: actions/checkout@v3
@@ -57,6 +56,14 @@ jobs:
           file: Dockerfile.fpm
           build-args: |
             BASE_TAG=${{ matrix.base-tag }}
+          cache-from: |
+            type=gha,scope=php-fpm
+          cache-to: |
+            type=gha,scope=php-fpm
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v7
 
   push_octane:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -68,12 +75,12 @@ jobs:
     strategy:
       matrix:
         base-tag:
-          - 4.8-php8.0-alpine
-          - 4.7-php8.0-alpine
-          - 4.6-php8.0-alpine
+          - 5.0-php8.2-alpine
+          - 5.0-php8.1-alpine
+          - 5.0-php8.0-alpine
+          - 4.8-php8.2-alpine
           - 4.8-php8.1-alpine
-          # - 4.7-php8.1-alpine
-          # - 4.6-php8.1-alpine
+          - 4.8-php8.0-alpine
 
     steps:
       - uses: actions/checkout@v3
@@ -111,6 +118,14 @@ jobs:
           file: Dockerfile.octane
           build-args: |
             BASE_TAG=${{ matrix.base-tag }}
+          cache-from: |
+            type=gha,scope=octane
+          cache-to: |
+            type=gha,scope=octane
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v7
 
   push_worker:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -122,9 +137,9 @@ jobs:
     strategy:
       matrix:
         base-tag:
+          - 8.2-cli-alpine
           - 8.1-cli-alpine
           - 8.0-cli-alpine
-          - 7.4-cli-alpine
 
     steps:
       - uses: actions/checkout@v3
@@ -162,3 +177,11 @@ jobs:
           file: Dockerfile.worker
           build-args: |
             BASE_TAG=${{ matrix.base-tag }}
+          cache-from: |
+            type=gha,scope=worker
+          cache-to: |
+            type=gha,scope=worker
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v7

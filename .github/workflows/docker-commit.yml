@@ -9,7 +9,7 @@ on:
       - "*"
 
 jobs:
-  fpm_push:
+  push_fpm:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
@@ -70,7 +70,7 @@ jobs:
             linux/arm64
             linux/arm/v7
 
-  octane_push:
+  push_octane:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
@@ -135,7 +135,7 @@ jobs:
             linux/arm64
             linux/arm/v7
 
-  worker_push:
+  push_worker:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
@@ -148,7 +148,6 @@ jobs:
         base-tag:
           - 8.1-cli-alpine
           - 8.0-cli-alpine
-          - 7.4-cli-alpine
 
     steps:
       - uses: actions/checkout@v3
