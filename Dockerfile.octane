@@ -1,7 +1,7 @@
 ARG BASE_TAG=4.6-php8.1-alpine
 
 # https://hub.docker.com/r/phpswoole/swoole
-FROM phpswoole/swoole:$BASE_TAG
+FROM --platform=$BUILDPLATFORM phpswoole/swoole:$BASE_TAG
 
 RUN apk --update add \
         wget \
@@ -28,10 +28,12 @@ RUN apk --update add \
         libzip-dev \
         gettext-dev \
         libxslt-dev \
-        libgcrypt-dev && \
-    pecl channel-update pecl.php.net && \
-    pecl install mcrypt redis-5.3.4 && \
+        libgcrypt-dev ; \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
+    pecl channel-update pecl.php.net ; \
+    pecl install mcrypt redis-5.3.4 ; \
     docker-php-ext-install \
+        gd \
         mysqli \
         mbstring \
         pdo \
@@ -45,11 +47,11 @@ RUN apk --update add \
         gettext \
         soap \
         sockets \
-        xsl && \
-    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ && \
-    docker-php-ext-install gd && \
-    docker-php-ext-enable redis && \
-    rm -rf /tmp/pear && \
+        xsl ; \
+    docker-php-ext-enable \
+        redis \
+        gd ; \
+    rm -rf /tmp/pear ; \
     rm /var/cache/apk/*
 
 WORKDIR /var/www/html

@@ -40,7 +40,7 @@ FROM quay.io/renokico/laravel-base:octane-latest-php8.1-alpine
 
 COPY . /var/www/html
 
-RUN mkdir -p /var/www/html/storage/logs/ && \
+RUN mkdir -p /var/www/html/storage/logs/ ; \
     chown -R www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
@@ -59,7 +59,7 @@ FROM quay.io/renokico/laravel-base:latest-8.1-fpm-alpine
 
 COPY . /var/www/html
 
-RUN mkdir -p /var/www/html/storage/logs/ && \
+RUN mkdir -p /var/www/html/storage/logs/ ; \
     chown -R www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
@@ -74,7 +74,7 @@ FROM quay.io/renokico/laravel-base:worker-latest-8.1-cli-alpine
 
 COPY . /var/www/html
 
-RUN mkdir -p /var/www/html/storage/logs/ && \
+RUN mkdir -p /var/www/html/storage/logs/ ; \
     chown -R www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
