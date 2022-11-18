@@ -20,9 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         base-tag:
-          - 8.0-fpm-alpine
           - 8.1-fpm-alpine
-          - 8.2-fpm-alpine
+          - 8.0-fpm-alpine
 
     steps:
       - uses: actions/checkout@v3
@@ -147,7 +146,6 @@ jobs:
       fail-fast: false
       matrix:
         base-tag:
-          - 8.2-cli-alpine
           - 8.1-cli-alpine
           - 8.0-cli-alpine
           - 7.4-cli-alpine
