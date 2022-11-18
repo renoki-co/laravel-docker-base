@@ -2,56 +2,67 @@ ARG BASE_TAG=8.1-cli-alpine
 
 FROM --platform=$BUILDPLATFORM php:$BASE_TAG
 
-RUN apk --update add \
-        wget \
-        curl \
+ARG PHPIZE_DEPS
+
+ADD docker-php-cleanup /usr/local/bin/
+
+RUN apk --update --no-cache add \
+        ${PHPIZE_DEPS} \
         build-base \
         composer \
-        nodejs \
-        npm \
+        freetype-dev \
+        gettext-dev \
+        icu-dev \
+        libgcrypt-dev \
         libmcrypt-dev \
+        libpq-dev \
         libxml2-dev \
-        pcre-dev \
-        zlib-dev \
-        autoconf \
+        libxslt-dev \
+        libzip-dev \
         oniguruma-dev \
         openssl \
         openssl-dev \
-        freetype-dev \
-        libjpeg-turbo-dev \
-        jpeg-dev \
-        libpng-dev \
-        imagemagick-dev \
-        imagemagick \
-        postgresql-dev \
-        libzip-dev \
-        gettext-dev \
-        libxslt-dev \
-        libgcrypt-dev ; \
-    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
+        pcre-dev \
+        wget \
+        zlib-dev ; \
+    apk add --update --no-cache --virtual \
+        .persistent-deps \
+        curl \
+		ca-certificates \
+		tar \
+		xz ; \
     pecl channel-update pecl.php.net ; \
-    pecl install mcrypt redis-5.3.4 ; \
+    pecl install mcrypt ; \
+    docker-php-ext-enable mcrypt ; \
+    docker-php-ext-configure intl ; \
     docker-php-ext-install \
-        gd \
-        mysqli \
-        mbstring \
-        pdo \
-        pdo_mysql \
-        xml \
-        pcntl \
         bcmath \
-        pdo_pgsql \
-        zip \
-        intl \
         gettext \
+        intl \
+        mbstring \
+        mysqli \
+        pcntl \
+        pdo \
+        pdo_pgsql \
         soap \
         sockets \
-        xsl ; \
-    docker-php-ext-enable \
-        redis \
-        gd ; \
-    rm -rf /tmp/pear ; \
-    rm /var/cache/apk/*
+        xml \
+        xsl \
+        zip ; \
+    rm -rf /tmp/* \
+        /usr/local/bin/phpdbg \
+        /usr/local/bin/php-cgi \
+        /usr/src/php.tar* \
+        /usr/includes/* \
+        /usr/share/man/* \
+        /var/cache/apk/* \
+        /var/tmp/* ; \
+    apk del --purge .phpize-deps ; \
+    apk del --purge build-base ; \
+    apk del --purge ${PHPIZE_DEPS} ; \
+    docker-php-source delete ; \
+    ln -sf $(which composer.phar) $(which composer) ; \
+    chmod +x /usr/local/bin/docker-php-cleanup
 
 WORKDIR /var/www/html
 
