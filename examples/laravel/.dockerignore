@@ -1,0 +1,11 @@
+.git/**/*
+bootstrap/cache/**/*
+node_modules/**/*
+storage/logs/**/*
+storage/framework/app/public/**/*
+storage/framework/cache/**/*
+storage/framework/sessions/**/*
+storage/framework/testing/**/*
+storage/framework/views/**/*
+tests/**/*
+vendor/**/*

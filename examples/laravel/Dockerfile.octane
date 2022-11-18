@@ -1,0 +1,50 @@
+ARG OCTANE_TAG=pr-27-octane-4.8-php8.1-alpine
+
+# 1. Create a preliminary step to build the required assets & dependencies.
+###########################################################################
+FROM quay.io/renokico/laravel-base:$OCTANE_TAG as build
+
+COPY . /var/www/html
+
+# Update permissions
+RUN chown www-data:www-data /var/www/html; \
+	chmod -R 777 /var/www/html
+
+# Install dependencies.
+RUN apk --update --no-cache add \
+    nodejs \
+    npm
+
+RUN composer install \
+        --no-ansi \
+        --no-dev \
+        --no-interaction \
+        --no-plugins \
+        --no-progress \
+        --no-scripts \
+        --optimize-autoloader
+
+RUN npm install
+
+# Build the assets.
+RUN npm run build
+
+# Cleanup unneeded files: node_modules & clearing all cache
+RUN rm -rf \
+        node_modules/ \
+        .env ; \
+    php artisan view:clear ; \
+    php artisan cache:clear file ; \
+    php artisan event:clear ; \
+    php artisan optimize:clear
+
+# 2. Build the final image from a clean base, making a copy of the prepared project.
+####################################################################################
+FROM quay.io/renokico/laravel-base:$OCTANE_TAG
+
+COPY --from=build /var/www/html .
+
+# Make sure to change the image user to www-data.
+USER www-data
+
+ENTRYPOINT ["./entrypoint-octane"]

@@ -1,0 +1,121 @@
+version: "3"
+
+services:
+  # Laravel Octane
+  octane:
+    image: laravel-docker-base/octane:local
+    build:
+      context: .
+      dockerfile: Dockerfile.octane
+    volumes:
+      - .env:/var/www/html/.env:ro
+    ports:
+      - 80:80
+    networks:
+      - laravel
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1/health"]
+      retries: 3
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      octane.scheduler:
+        condition: service_started
+      octane.queues:
+        condition: service_started
+  octane.scheduler:
+    image: laravel-docker-base/octane:local
+    build:
+      context: .
+      dockerfile: Dockerfile.octane
+    volumes:
+      - .env:/var/www/html/.env:ro
+    entrypoint:
+      - php
+      - artisan
+      - schedule:work
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      retries: 3
+      interval: 5s
+      timeout: 3s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  octane.queues:
+    image: laravel-docker-base/octane:local
+    build:
+      context: .
+      dockerfile: Dockerfile.octane
+    volumes:
+      - .env:/var/www/html/.env:ro
+    entrypoint:
+      - php
+      - artisan
+      - queue:work
+      - --name=octane-default
+      - --queue=default
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      retries: 3
+      interval: 5s
+      timeout: 3s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Other services (i.e. databases)
+  postgres:
+    image: postgres:14
+    ports:
+      - ${FORWARD_DB_PORT:-5432}:5432
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    networks:
+      - laravel
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+      retries: 3
+      timeout: 5s
+  redis:
+    image: redis:alpine
+    ports:
+      - ${FORWARD_REDIS_PORT:-6379}:6379
+    volumes:
+      - redis-data:/data
+    networks:
+      - laravel
+    healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        retries: 3
+        timeout: 5s
+
+networks:
+  laravel:
+    driver: bridge
+
+volumes:
+  pgsql-data:
+    driver: local
+  redis-data:
+    driver: local
