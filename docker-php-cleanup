@@ -10,8 +10,8 @@ rm -rf /usr/share/man/*
 rm -rf /var/cache/apk/*
 rm -rf /var/tmp/*
 
-apk del --purge .phpize-deps
-apk del --purge build-base
-apk del --purge ${PHPIZE_DEPS}
+apk del --purge -q .phpize-deps
+apk del --purge -q build-base
+apk del --purge -q ${PHPIZE_DEPS}
 
 docker-php-source delete
