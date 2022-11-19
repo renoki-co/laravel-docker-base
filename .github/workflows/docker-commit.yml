@@ -81,10 +81,8 @@ jobs:
       fail-fast: false
       matrix:
         base-tag:
-          - 5.0-php8.2-alpine
           - 5.0-php8.1-alpine
           - 5.0-php8.0-alpine
-          - 4.8-php8.2-alpine
           - 4.8-php8.1-alpine
           - 4.8-php8.0-alpine
 
