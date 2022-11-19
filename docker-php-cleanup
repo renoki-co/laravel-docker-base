@@ -3,7 +3,6 @@
 rm -rf /tmp/*
 rm -rf /usr/local/bin/phpdbg
 rm -rf /usr/local/bin/php-cgi
-rm -rf /usr/src/php.tar*
 rm -rf /usr/includes/*
 rm -rf /usr/share/man/*
 rm -rf /var/cache/apk/*
