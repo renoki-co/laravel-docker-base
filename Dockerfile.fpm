@@ -49,7 +49,6 @@ RUN set -ex ; \
         xsl \
         zip ; \
     ln -sf $(which composer.phar) $(which composer) ; \
-    chmod +x /usr/local/bin/docker-php-cleanup ; \
     docker-php-cleanup
 
 WORKDIR /var/www/html
