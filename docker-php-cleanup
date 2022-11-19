@@ -1,4 +1,5 @@
-#!/bin/ash
+#!/bin/sh
+set -e
 
 rm -rf /tmp/*
 rm -rf /usr/local/bin/phpdbg

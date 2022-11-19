@@ -3,11 +3,10 @@ ARG BASE_TAG=4.8-php8.1-alpine
 # https://hub.docker.com/r/phpswoole/swoole
 FROM --platform=$BUILDPLATFORM phpswoole/swoole:$BASE_TAG
 
-ARG PHPIZE_DEPS
+COPY docker-php-cleanup /usr/local/bin/
 
-ADD docker-php-cleanup /usr/local/bin/
-
-RUN apk --update --no-cache add \
+RUN set -ex ; \
+    apk --update --no-cache add \
         ${PHPIZE_DEPS} \
         build-base \
         composer \
@@ -52,7 +51,7 @@ RUN apk --update --no-cache add \
         zip ; \
     ln -sf $(which composer.phar) $(which composer) ; \
     chmod +x /usr/local/bin/docker-php-cleanup ; \
-    sh /usr/local/bin/docker-php-cleanup
+    docker-php-cleanup
 
 WORKDIR /var/www/html
 
