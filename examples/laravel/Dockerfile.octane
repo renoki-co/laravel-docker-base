@@ -7,13 +7,22 @@ FROM quay.io/renokico/laravel-base:$OCTANE_TAG as build
 COPY . /var/www/html
 
 # Update permissions
-RUN chown www-data:www-data /var/www/html; \
+RUN chown www-data:www-data /var/www/html ; \
 	chmod -R 777 /var/www/html
 
 # Install dependencies.
 RUN apk --update --no-cache add \
     nodejs \
     npm
+
+# For our demo, we will be able to generate an image using Imagemagick
+# so we need GD & ImageMagick
+RUN apk --update --no-cache add \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+        libpng-dev ; \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
+    docker-php-ext-install gd
 
 RUN composer install \
         --no-ansi \
@@ -33,9 +42,6 @@ RUN npm run build
 RUN rm -rf \
         node_modules/ \
         .env ; \
-    php artisan view:clear ; \
-    php artisan cache:clear file ; \
-    php artisan event:clear ; \
     php artisan optimize:clear
 
 # 2. Build the final image from a clean base, making a copy of the prepared project.
@@ -43,6 +49,16 @@ RUN rm -rf \
 FROM quay.io/renokico/laravel-base:$OCTANE_TAG
 
 COPY --from=build /var/www/html .
+
+RUN chown www-data:www-data /var/www/html ; \
+	chmod -R 777 /var/www/html ; \
+    apk --update --no-cache add \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+        libpng-dev ; \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
+    docker-php-ext-install gd ; \
+    docker-php-cleanup
 
 # Make sure to change the image user to www-data.
 USER www-data

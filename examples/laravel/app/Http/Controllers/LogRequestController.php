@@ -20,7 +20,7 @@ class LogRequestController extends Controller
 
         return Response::json([
             'status' => 'success',
-            'request' => $request,
+            'request' => $request->__toString(),
         ]);
     }
 }

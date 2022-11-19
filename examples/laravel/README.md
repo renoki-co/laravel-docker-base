@@ -14,6 +14,7 @@ cp .env.example .env
 
 This project is simple:
 
+- there is a `GET /image` endpoint that generates a random shape with GD (an extension that is not included in the original Docker Base image)
 - there is a `GET /health` endpoint for healthchecks
 - there is a `ANY /` endpoint that will dispatch a job to store a record in the database (in `logged_requests`)
 - has a Job ([`LogRequest`](app/Jobs/LogRequest.php)) that will execute the `logged_requests` INSERT query
@@ -58,9 +59,6 @@ After the assets got compiled in the first step, you should do a cleanup, like r
 RUN rm -rf \
         node_modules/ \
         .env ; \
-    php artisan view:clear ; \
-    php artisan cache:clear file ; \
-    php artisan event:clear ; \
     php artisan optimize:clear
 ```
 
@@ -70,83 +68,49 @@ More or less, all Docker images come pre-packaged with the following extensions:
 
 <details>
     <summary>View extensions</summary>
-    ```
-    bcmath
-    Core
-    ctype
-    curl
-    date
-    dom
-    fileinfo
-    filter
-    ftp
-    gettext
-    hash
-    iconv
-    intl
-    json
-    libxml
-    mbstring
-    mcrypt
-    mysqli
-    mysqlnd
-    openssl
-    pcntl
-    pcre
-    PDO
-    pdo_mysql
-    pdo_pgsql
-    pdo_sqlite
-    Phar
-    posix
-    readline
-    redis
-    Reflection
-    session
-    SimpleXML
-    soap
-    sockets
-    sodium
-    SPL
-    sqlite3
-    standard
-    tokenizer
-    xml
-    xmlreader
-    xmlwriter
-    xsl
-    zip
-    zlib
-    ```
+    bcmath Core ctype curl date dom fileinfo filter ftp gettext hash iconv intl json libxml mbstring mcrypt mysqli mysqlnd openssl pcntl pcre PDO pdo_mysql pdo_pgsql pdo_sqlite Phar posix readline redis Reflection session SimpleXML soap sockets sodium SPL sqlite3 standard tokenizer xml xmlreader xmlwriter xsl zip zlib
 </details>
 
-To install custom extensions, you can do one of the following install & configure them when building your project.
+To install custom extensions, you can install & configure them when building your project.
 
 Make sure that after you are done, you are cleaning up the image again: after we install extensions, traces of build binaries used to compile them are still left in your image, pontetially making your final image bigger.
 
 The delivered Docker images are pre-packaged with a `docker-php-cleanup` file whose job is to clean them up:
 
 ```dockerfile
+# Note: this image does not need cleanup, the stage will not get to the final image.
+
 FROM quay.io... as build
 
 # Some Composer packages might require "ext-gd"
-RUN docker-php-ext-configure gd ; \
+RUN apk --update --no-cache add \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+        libpng-dev \
+        imagemagick-dev \
+        imagemagick \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
     docker-php-ext-install gd
 
-# i.e. composer install
-
-# Note: this image does not need to be cleaned up
-# because the stage will not get into the final image.
+# Proceed with the installation
+composer install --no-dev ...
 
 FROM quay.io...
 
 COPY --from=build /var/www/html .
 
 # The final image does not contain gd, so it has to be installed again.
-# Note: Here, cleanup should be called.
-RUN docker-php-ext-configure gd ; \
+# Note: Here, "docker-php-cleanup" should be called,
+#       and all commands should be condensed into a single layer.
+RUN apk --update --no-cache add \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+        libpng-dev \
+        imagemagick-dev \
+        imagemagick \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
     docker-php-ext-install gd ; \
-    sh /usr/local/bin/docker-php-cleanup
+    docker-php-cleanup
 ```
 
 ## ⛽️ Octane
@@ -159,7 +123,15 @@ To get started, run the Octane example:
 docker-compose up --wait -d octane
 ```
 
-- It spins up an Octane-powered server on `http://localhost`
+You can test your application:
+
+```bash
+curl -X GET http://127.0.0.1
+```
+
+The stack contains:
+
+- It spins up an Octane-powered server on `http://127.0.0.1`
 - It spins up a container that will run the Scheduler (for the CRON tasks), using the same image
 - It spins up a container that will run the Queues worker, using the same image
 - Secrets: the secrets are not compiled in the final image; the `*:cache` commands are going to be called when the container starts

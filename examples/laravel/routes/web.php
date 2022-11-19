@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogRequestController;
+use App\Http\Controllers\RandomImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::any('/', LogRequestController::class)->name('log-request');
-Route::get('/health', fn () => 'OK');
+Route::any('/image', RandomImageController::class)->name('random-image');
+Route::get('/health', fn () => 'OK')->name('healthcheck');
