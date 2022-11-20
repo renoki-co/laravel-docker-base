@@ -60,7 +60,4 @@ RUN chown www-data:www-data /var/www/html ; \
     docker-php-ext-install gd ; \
     docker-php-cleanup
 
-# Make sure to change the image user to www-data.
-USER www-data
-
 ENTRYPOINT ["./entrypoint-octane"]
