@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 
 # Cache configs.
 php artisan config:cache
