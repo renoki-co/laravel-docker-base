@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\LogRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 class LogRequestController extends Controller
@@ -17,6 +18,7 @@ class LogRequestController extends Controller
     public function __invoke(Request $request)
     {
         LogRequest::dispatch($request->__toString());
+        Log::debug($request->__toString());
 
         return Response::json([
             'status' => 'success',
