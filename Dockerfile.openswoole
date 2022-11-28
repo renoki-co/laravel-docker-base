@@ -1,0 +1,60 @@
+ARG BASE_TAG=4.11-php8.1-alpine
+
+# https://hub.docker.com/r/openswoole/swoole
+FROM --platform=$BUILDPLATFORM openswoole/swoole:$BASE_TAG
+
+COPY docker-php-cleanup /usr/local/bin/
+
+RUN set -ex ; \
+    apk --update --no-cache add \
+        ${PHPIZE_DEPS} \
+        build-base \
+        composer \
+        freetype-dev \
+        gettext-dev \
+        icu-dev \
+        libgcrypt-dev \
+        libmcrypt-dev \
+        libpq-dev \
+        libxml2-dev \
+        libxslt-dev \
+        libzip-dev \
+        oniguruma-dev \
+        openssl \
+        openssl-dev \
+        pcre-dev \
+        wget \
+        zlib-dev ; \
+    apk add --update --no-cache --virtual \
+        .persistent-deps \
+        curl \
+		ca-certificates \
+		tar \
+		xz ; \
+    pecl channel-update pecl.php.net ; \
+    pecl install mcrypt ; \
+    docker-php-ext-enable mcrypt ; \
+    docker-php-ext-configure intl ; \
+    docker-php-ext-install \
+        bcmath \
+        gettext \
+        intl \
+        mbstring \
+        mysqli \
+        pcntl \
+        pdo \
+        pdo_pgsql \
+        soap \
+        sockets \
+        xml \
+        xsl \
+        zip ; \
+    ln -sf $(which composer.phar) $(which composer) ; \
+    chmod +x /usr/local/bin/docker-php-cleanup ; \
+    docker-php-cleanup
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["php", "-d", "variables_order=EGPCS", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=80"]
+
+EXPOSE 80
