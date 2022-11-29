@@ -70,21 +70,31 @@ jobs:
             linux/arm64
             linux/arm/v7
 
-  push_octane:
+  push_swoole:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Commit (Octane, ${{ matrix.base-tag }})
+    name: Tag Commit (${{ matrix.swoole }}/v${{ matrix.swoole-version }} with ${{ matrix.php-tag }})
 
     strategy:
       fail-fast: false
       matrix:
-        base-tag:
-          - 5.0-php8.1-alpine
-          - 5.0-php8.0-alpine
-          - 4.8-php8.1-alpine
-          - 4.8-php8.0-alpine
+        php-tag:
+          - php8.1-cli-alpine3.15
+          - php8.0-cli-alpine3.15
+        swoole:
+          - openswoole
+          - swoole
+        includes:
+          - swoole: openswoole
+            swoole-version: "4.12.0"
+          - swoole: openswoole
+            swoole-version: "4.11.1"
+          - swoole: swoole
+            swoole-version: "4.8.9"
+          - swoole: swoole
+            swoole-version: "5.0.1"
 
     steps:
       - uses: actions/checkout@v3
@@ -98,8 +108,8 @@ jobs:
         with:
           images: quay.io/renokico/laravel-base
           tags: |
-            type=ref,event=pr,suffix=-octane-${{ matrix.base-tag }}
-            type=raw,value=octane-${{ github.sha }}-${{ matrix.base-tag }}
+            type=ref,event=pr,suffix=-${{ matrix.swoole }}${{ matrix.swoole-version }}-${{ matrix.php-tag }}
+            type=raw,value=${{ github.sha }}-${{ matrix.swoole }}${{ matrix.swoole-version }}-${{ matrix.php-tag }}
           labels: |
             quay.expires-after=7d
 
@@ -121,74 +131,15 @@ jobs:
           context: .
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          file: Dockerfile.octane
+          file: Dockerfile.swoole
           build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
+            SWOOLE=${{ matrix.swoole }}
+            SWOOLE_VERSION=${{ matrix.swoole-version }}
+            PHP_TAG=${{ matrix.php-tag }}
           cache-from: |
-            type=gha,scope=octane
+            type=gha,scope=swoole
           cache-to: |
-            type=gha,scope=octane
-          platforms: |
-            linux/amd64
-            linux/arm64
-            linux/arm/v7
-
-  push_openswoole:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-
-    runs-on: ubuntu-latest
-
-    name: Tag Commit (Openswoole for Octane, ${{ matrix.base-tag }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        base-tag:
-          - 4.11-php8.1-alpine
-          - 4.11-php8.0-alpine
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Docker meta
-        id: docker_meta
-        uses: docker/metadata-action@v4.0.1
-        with:
-          images: quay.io/renokico/laravel-base
-          tags: |
-            type=ref,event=pr,suffix=-openswoole-${{ matrix.base-tag }}
-            type=raw,value=openswoole-${{ github.sha }}-${{ matrix.base-tag }}
-          labels: |
-            quay.expires-after=7d
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Quay
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.DOCKER_REPOSITORY_USERNAME }}
-          password: ${{ secrets.DOCKER_REPOSITORY_TOKEN }}
-
-      - name: Build and push
-        id: docker
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          context: .
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
-          file: Dockerfile.openswoole
-          build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
-          cache-from: |
-            type=gha,scope=openswoole
-          cache-to: |
-            type=gha,scope=openswoole
+            type=gha,scope=swoole
           platforms: |
             linux/amd64
             linux/arm64
