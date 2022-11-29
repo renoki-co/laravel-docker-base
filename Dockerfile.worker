@@ -97,7 +97,6 @@ RUN set -eux ; \
         $(cat /PACKAGES) \
         ca-certificates \
         curl ; \
-    php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer ; \
     groupadd --force -g $WWWGROUP sailor ; \
     useradd -ms /bin/bash --no-log-init --no-user-group -g $WWWGROUP -u $WWWUSER sailor ; \
     docker-php-cleanup
