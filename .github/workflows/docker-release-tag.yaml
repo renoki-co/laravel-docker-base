@@ -80,7 +80,7 @@ jobs:
         swoole:
           - openswoole
           - swoole
-        includes:
+        include:
           - swoole: openswoole
             swoole-version: "4.12.0"
           - swoole: openswoole
