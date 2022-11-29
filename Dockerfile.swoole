@@ -73,15 +73,25 @@ RUN set -eux ; \
     mkdir /usr/src/php/ext/${SWOOLE} ; \
     curl -sfL https://github.com/${SWOOLE}/swoole-src/archive/v${SWOOLE_VERSION}.tar.gz -o swoole.tar.gz ; \
     tar xfz swoole.tar.gz --strip-components=1 -C /usr/src/php/ext/${SWOOLE} ; \
-    docker-php-ext-configure ${SWOOLE} \
-        --enable-http2 \
-        --enable-mysqlnd \
-        --enable-openssl \
-        --enable-sockets \
-        --enable-swoole-curl \
-        --enable-swoole-json ; \
+    if [ ${SWOOLE} = 'swoole' ]; then \
+        docker-php-ext-configure ${SWOOLE} \
+            --enable-mysqlnd \
+            --enable-openssl \
+            --enable-sockets \
+            --enable-swoole-curl ; \
+    fi ; \
+    if [ ${SWOOLE} = 'openswoole' ]; then \
+        docker-php-ext-configure ${SWOOLE} \
+            --enable-http2 \
+            --enable-mysqlnd \
+            --enable-openssl \
+            --enable-sockets \
+            --enable-swoole-curl \
+            --enable-swoole-json ; \
+    fi ; \
     docker-php-ext-install -j$(nproc) ${SWOOLE} ; \
     rm -f swoole.tar.gz $HOME/.composer/*-old.phar ; \
+    php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/local/bin/ --filename=composer ; \
     chmod +x /usr/local/bin/docker-php-cleanup ; \
     chmod +x /usr/local/bin/docker-extract-apt ; \
     docker-php-cleanup ; \
@@ -113,7 +123,6 @@ RUN set -eux ; \
         $(cat /PACKAGES) \
         ca-certificates \
         curl ; \
-    php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer ; \
     groupadd --force -g $WWWGROUP sailor ; \
     useradd -ms /bin/bash --no-log-init --no-user-group -g $WWWGROUP -u $WWWUSER sailor ; \
     docker-php-cleanup

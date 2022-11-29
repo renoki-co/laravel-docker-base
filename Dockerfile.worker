@@ -65,6 +65,7 @@ RUN set -eux ; \
         xml \
         xsl \
         zip ; \
+    php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/local/bin/ --filename=composer ; \
     chmod +x /usr/local/bin/docker-php-cleanup ; \
     chmod +x /usr/local/bin/docker-extract-apt ; \
     docker-php-cleanup ; \
