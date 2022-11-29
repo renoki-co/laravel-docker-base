@@ -3,7 +3,7 @@ ARG WWWUSER=1000
 ARG WWWGROUP=1000
 ARG TZ=UTC
 
-FROM --platform=$BUILDPLATFORM php:$PHP_VERSION-cli-bullseye as build
+FROM --platform=$TARGETPLATFORM php:$PHP_VERSION-cli-bullseye as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -73,7 +73,7 @@ RUN set -eux ; \
     docker-php-cleanup ; \
     docker-extract-apt
 
-FROM debian:bullseye-slim
+FROM --platform=$TARGETPLATFORM debian:bullseye-slim
 
 ARG WWWUSER
 ARG WWWGROUP
