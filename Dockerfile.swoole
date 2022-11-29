@@ -1,4 +1,4 @@
-ARG PHP_TAG=php8.1-cli-alpine3.15
+ARG PHP_TAG=8.1-cli-alpine3.15
 ARG SWOOLE_VERSION=4.8.12
 ARG SWOOLE=swoole
 

@@ -81,8 +81,8 @@ jobs:
       fail-fast: false
       matrix:
         php-tag:
-          - php8.1-cli-alpine3.15
-          - php8.0-cli-alpine3.15
+          - 8.1-cli-alpine3.15
+          - 8.0-cli-alpine3.15
         swoole:
           - openswoole
           - swoole
