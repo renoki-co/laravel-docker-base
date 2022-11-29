@@ -19,6 +19,7 @@ RUN set -eux ; \
         gnupg \
         gosu \
         git \
+        openssl \
         wget ; \
     apt install -y \
         g++ \
@@ -30,6 +31,7 @@ RUN set -eux ; \
         libidn2-0 \
         libicu-dev \
         libmcrypt-dev \
+        libmcrypt4 \
         libonig-dev \
         libpq-dev \
         libpcre2-8-0 \
@@ -87,6 +89,8 @@ COPY --from=build /usr/local/lib/php/ /usr/local/lib/php/
 COPY --from=build /usr/local/bin /usr/local/bin
 COPY --from=build /usr/local/sbin /usr/local/sbin
 COPY --from=build /usr/local/etc /usr/local/etc
+COPY --from=build /usr/src/php.tar.* /usr/src
+COPY --from=build /usr/lib/*.so* /usr/lib
 COPY --from=build /PACKAGES /
 
 RUN set -eux ; \
