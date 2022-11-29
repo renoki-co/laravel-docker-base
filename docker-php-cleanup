@@ -5,11 +5,9 @@ rm -rf /usr/local/bin/phpdbg
 rm -rf /usr/local/bin/php-cgi
 rm -rf /usr/includes/*
 rm -rf /usr/share/man/*
-rm -rf /var/cache/apk/*
+rm -rf /var/cache/*
 rm -rf /var/tmp/*
-
-apk del --purge .phpize-deps
-apk del --purge build-base
-apk del --purge ${PHPIZE_DEPS}
-
-docker-php-source delete
+rm -rf /var/lib/apt/lists/*
+rm -rf /var/log/lastlog
+rm -rf /var/log/faillog
+rm -rf /usr/local/lib/php/test

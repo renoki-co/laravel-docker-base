@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Strip the dependencies to minimal ones and store them in /PACKAGES
+find /usr/local/bin /usr/local/sbin /usr/local/lib -type f -perm /0111 -exec strip --strip-all '{}' + || true
+
+find /usr/local/lib/php /usr/local/bin /usr/local/sbin -type f -executable -exec ldd '{}' ';' \
+    | awk '/=>/ { print $(NF-1) }' \
+    | sort -u \
+    | xargs -r dpkg-query --search \
+    | cut -d: -f1 \
+    | sort -u > /PACKAGES

@@ -11,14 +11,14 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Release (PHP-FPM, ${{ matrix.base-tag }})
+    name: Tag Release (PHP-FPM with PHP${{ matrix.php }})
 
     strategy:
       fail-fast: false
       matrix:
-        base-tag:
-          - 8.1-fpm-alpine
-          - 8.0-fpm-alpine
+        php:
+          - "8.1"
+          - "8.0"
 
     steps:
       - uses: actions/checkout@v3
@@ -29,8 +29,8 @@ jobs:
         with:
           images: quay.io/renokico/laravel-base
           tags: |
-            type=semver,pattern={{version}}-${{ matrix.base-tag }}
-            type=semver,pattern={{major}}.{{minor}}-${{ matrix.base-tag }}
+            type=semver,pattern={{version}}-${{ matrix.php }}-fpm
+            type=semver,pattern={{major}}.{{minor}}-${{ matrix.php }}-fpm
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -55,7 +55,7 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.fpm
           build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
+            PHP_VERSION=${{ matrix.php }}
           cache-from: |
             type=gha,scope=php-fpm
           cache-to: |
@@ -70,13 +70,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Release (${{ matrix.swoole }}/v${{ matrix.swoole-version }} with ${{ matrix.php-tag }})
+    name: Tag Release (${{ matrix.swoole }}/v${{ matrix.swoole-version }} with PHP${{ matrix.php }})
 
     strategy:
       matrix:
-        php-tag:
-          - 8.1-cli-alpine3.15
-          - 8.0-cli-alpine3.15
+        php:
+          - "8.1"
+          - "8.0"
         swoole:
           - openswoole
           - swoole
@@ -99,8 +99,8 @@ jobs:
         with:
           images: quay.io/renokico/laravel-base
           tags: |
-            type=semver,pattern={{version}}-${{ matrix.swoole }}${{ matrix.swoole-version }}-${{ matrix.php-tag }}
-            type=semver,pattern={{major}}.{{minor}}-${{ matrix.swoole }}${{ matrix.swoole-version }}-${{ matrix.php-tag }}
+            type=semver,pattern={{version}}-php${{ matrix.php }}-${{ matrix.swoole }}${{ matrix.swoole-version }}
+            type=semver,pattern={{major}}.{{minor}}-php${{ matrix.php }}-${{ matrix.swoole }}${{ matrix.swoole-version }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -127,7 +127,7 @@ jobs:
           build-args: |
             SWOOLE=${{ matrix.swoole }}
             SWOOLE_VERSION=${{ matrix.swoole-version }}
-            PHP_TAG=${{ matrix.php-tag }}
+            PHP_VERSION=${{ matrix.php }}
           cache-from: |
             type=gha,scope=swoole
           cache-to: |
@@ -142,13 +142,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Release (Worker, ${{ matrix.base-tag }})
+    name: Tag Release (Worker with PHP${{ matrix.php }} CLI)
 
     strategy:
       matrix:
-        base-tag:
-          - 8.1-cli-alpine
-          - 8.0-cli-alpine
+        php:
+          - "8.1"
+          - "8.0"
 
     steps:
       - uses: actions/checkout@v3
@@ -159,8 +159,8 @@ jobs:
         with:
           images: quay.io/renokico/laravel-base
           tags: |
-            type=semver,pattern=worker-{{version}}-${{ matrix.base-tag }}
-            type=semver,pattern=worker-{{major}}.{{minor}}-${{ matrix.base-tag }}
+            type=semver,pattern={{version}}-${{ matrix.php }}-worker
+            type=semver,pattern={{major}}.{{minor}}-${{ matrix.php }}-worker
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -185,7 +185,7 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.worker
           build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
+            PHP_VERSION=${{ matrix.php }}
           cache-from: |
             type=gha,scope=worker
           cache-to: |

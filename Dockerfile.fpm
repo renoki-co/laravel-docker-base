@@ -1,40 +1,54 @@
-ARG BASE_TAG=8.1-fpm-alpine
+ARG PHP_VERSION=8.1
+ARG WWWUSER=1000
+ARG WWWGROUP=1000
+ARG TZ=UTC
 
-FROM --platform=$BUILDPLATFORM php:$BASE_TAG
+FROM --platform=$BUILDPLATFORM php:$PHP_VERSION-fpm-bullseye as build
 
-COPY docker-php-cleanup /usr/local/bin/
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN set -ex ; \
-    apk --update --no-cache add \
+COPY docker-php-cleanup docker-extract-apt /usr/local/bin/
+
+RUN set -eux ; \
+    apt update -y ; \
+    apt install -y \
         ${PHPIZE_DEPS} \
-        build-base \
-        composer \
-        freetype-dev \
-        gettext-dev \
-        icu-dev \
-        libgcrypt-dev \
+        apt-utils \
+        ca-certificates \
+        curl \
+        gnupg \
+        gosu \
+        git \
+        wget ; \
+    apt install -y \
+        g++ \
+        libargon2-1 \
+        libbrotli-dev \
+        libc-ares-dev \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libidn2-0 \
+        libicu-dev \
         libmcrypt-dev \
+        libonig-dev \
         libpq-dev \
+        libpcre2-8-0 \
+        libpcre3 \
+        libssl-dev \
+        libwebp-dev \
         libxml2-dev \
         libxslt-dev \
+        libz-dev \
         libzip-dev \
-        oniguruma-dev \
-        openssl \
-        openssl-dev \
-        pcre-dev \
-        wget \
-        zlib-dev ; \
-    apk add --update --no-cache --virtual \
-        .persistent-deps \
-        curl \
-		ca-certificates \
-		tar \
-		xz ; \
+        libzstd1 \
+        procps \
+        unzip \
+        zip \
+        zlib1g-dev ; \
+    docker-php-source extract ; \
     pecl channel-update pecl.php.net ; \
     pecl install mcrypt ; \
-    pecl install redis ; \
     docker-php-ext-enable mcrypt ; \
-    docker-php-ext-enable redis ; \
     docker-php-ext-configure intl ; \
     docker-php-ext-install \
         bcmath \
@@ -42,6 +56,7 @@ RUN set -ex ; \
         intl \
         mbstring \
         mysqli \
+        opcache \
         pcntl \
         pdo \
         pdo_pgsql \
@@ -50,8 +65,44 @@ RUN set -ex ; \
         xml \
         xsl \
         zip ; \
-    ln -sf $(which composer.phar) $(which composer) ; \
     chmod +x /usr/local/bin/docker-php-cleanup ; \
+    chmod +x /usr/local/bin/docker-extract-apt ; \
+    docker-php-cleanup ; \
+    docker-extract-apt
+
+FROM debian:bullseye-slim
+
+ARG WWWUSER
+ARG WWWGROUP
+ARG TZ
+
+LABEL maintainer="Alex Renoki <alex@renoki.org>"
+
+ENV PHP_INI_DIR /usr/local/etc/php
+ENV DEBIAN_FRONTEND=noninteractive
+
+COPY --from=build /usr/local/include/ /usr/local/include/
+COPY --from=build /usr/local/lib/php/ /usr/local/lib/php/
+COPY --from=build /usr/local/bin /usr/local/bin
+COPY --from=build /usr/local/sbin /usr/local/sbin
+COPY --from=build /usr/local/etc /usr/local/etc
+COPY --from=build /PACKAGES /
+
+RUN set -eux ; \
+    apt-get update -y ; \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime ; \
+    echo $TZ > /etc/timezone ; \
+    apt-get install -y --no-install-recommends \
+        $(cat /PACKAGES) \
+        ca-certificates \
+        curl ; \
+    php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer ; \
+    groupadd --force -g $WWWGROUP sailor ; \
+    useradd -ms /bin/bash --no-log-init --no-user-group -g $WWWGROUP -u $WWWUSER sailor ; \
     docker-php-cleanup
 
 WORKDIR /var/www/html
+
+ENTRYPOINT ["php-fpm"]
+
+EXPOSE 9000
