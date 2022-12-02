@@ -1,0 +1,61 @@
+ARG OCTANE_TAG=octane-a65874dd8e099759ebdd6271caff2ae2513cc65f-4.8-php8.1-alpine
+
+# 1. Create a preliminary step to build the required assets & dependencies.
+###########################################################################
+FROM quay.io/renokico/laravel-base:$OCTANE_TAG as build
+
+COPY . /var/www/html
+
+# Update permissions
+RUN chmod -R 777 /var/www/html
+
+# Install dependencies.
+RUN apk --update --no-cache add \
+    nodejs \
+    npm
+
+# For our demo, we will be able to generate an image using Imagemagick
+# so we need GD & ImageMagick
+RUN apk --update --no-cache add \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+        libpng-dev ; \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
+    docker-php-ext-install gd
+
+RUN composer install \
+        --no-ansi \
+        --no-dev \
+        --no-interaction \
+        --no-plugins \
+        --no-progress \
+        --no-scripts \
+        --optimize-autoloader
+
+RUN npm install
+
+# Build the assets.
+RUN npm run build
+
+# Cleanup unneeded files: node_modules & clearing all cache
+RUN rm -rf \
+        node_modules/ \
+        .env ; \
+    php artisan optimize:clear
+
+# 2. Build the final image from a clean base, making a copy of the prepared project.
+####################################################################################
+FROM quay.io/renokico/laravel-base:$OCTANE_TAG
+
+COPY --from=build /var/www/html .
+
+RUN chmod -R 777 /var/www/html ; \
+    apk --update --no-cache add \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+        libpng-dev ; \
+    docker-php-ext-configure gd --with-freetype=/usr/lib/ --with-jpeg=/usr/lib/ ; \
+    docker-php-ext-install gd ; \
+    docker-php-cleanup
+
+ENTRYPOINT ["./entrypoint-octane"]

@@ -11,21 +11,28 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Tag Latest (PHP-FPM, ${{ matrix.base-tag }})
+    name: Tag Latest (PHP-FPM with PHP${{ matrix.php }})
 
     strategy:
       fail-fast: false
       matrix:
-        base-tag:
-          - 7.4-fpm-alpine
-          - 8.0-fpm-alpine
-          - 8.1-fpm-alpine
+        php:
+          - "8.1"
+          - "8.0"
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4.0.1
+        with:
+          images: quay.io/renokico/laravel-base
+          tags: |
+            type=raw,value=latest-${{ matrix.php }}-fpm
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -43,34 +50,59 @@ jobs:
         with:
           push: true
           context: .
-          tags: quay.io/renokico/laravel-base:latest-${{ matrix.base-tag }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.fpm
           build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
+            PHP_VERSION=${{ matrix.php }}
+          cache-from: |
+            type=gha,scope=php-fpm
+          cache-to: |
+            type=gha,scope=php-fpm
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v7
 
-  push_octane:
+  push_swoole:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Latest (Octane, ${{ matrix.base-tag }})
+    name: Tag Latest (${{ matrix.swoole }}/v${{ matrix.swoole-version }} with PHP${{ matrix.php }})
 
     strategy:
       fail-fast: false
       matrix:
-        base-tag:
-          - 4.8-php8.0-alpine
-          - 4.7-php8.0-alpine
-          - 4.6-php8.0-alpine
-          - 4.8-php8.1-alpine
-          # - 4.7-php8.1-alpine
-          # - 4.6-php8.1-alpine
+        php:
+          - "8.1"
+          - "8.0"
+        swoole:
+          - openswoole
+          - swoole
+        include:
+          - swoole: openswoole
+            swoole-version: "4.12.0"
+          - swoole: openswoole
+            swoole-version: "4.11.1"
+          - swoole: swoole
+            swoole-version: "4.8.9"
+          - swoole: swoole
+            swoole-version: "5.0.1"
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4.0.1
+        with:
+          images: quay.io/renokico/laravel-base
+          tags: |
+            type=raw,value=latest-php${{ matrix.php }}-${{ matrix.swoole }}${{ matrix.swoole-version }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -88,31 +120,49 @@ jobs:
         with:
           push: true
           context: .
-          tags: quay.io/renokico/laravel-base:octane-latest-${{ matrix.base-tag }}
-          file: Dockerfile.octane
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          file: Dockerfile.swoole
           build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
+            SWOOLE=${{ matrix.swoole }}
+            SWOOLE_VERSION=${{ matrix.swoole-version }}
+            PHP_VERSION=${{ matrix.php }}
+          cache-from: |
+            type=gha,scope=swoole
+          cache-to: |
+            type=gha,scope=swoole
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v7
 
   push_worker:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
-    name: Tag Latest (Worker, ${{ matrix.base-tag }})
+    name: Tag Latest (Worker with PHP${{ matrix.php }} CLI)
 
     strategy:
       fail-fast: false
       matrix:
-        base-tag:
-          - 8.1-cli-alpine
-          - 8.0-cli-alpine
-          - 7.4-cli-alpine
+        php:
+          - "8.1"
+          - "8.0"
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4.0.1
+        with:
+          images: quay.io/renokico/laravel-base
+          tags: |
+            type=raw,value=worker-latest-${{ matrix.php }}-worker
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -130,7 +180,16 @@ jobs:
         with:
           push: true
           context: .
-          tags: quay.io/renokico/laravel-base:worker-latest-${{ matrix.base-tag }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
           file: Dockerfile.worker
           build-args: |
-            BASE_TAG=${{ matrix.base-tag }}
+            PHP_VERSION=${{ matrix.php }}
+          cache-from: |
+            type=gha,scope=worker
+          cache-to: |
+            type=gha,scope=worker
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v7
