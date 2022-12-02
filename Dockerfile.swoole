@@ -5,7 +5,7 @@ ARG WWWUSER=1000
 ARG WWWGROUP=1000
 ARG TZ=UTC
 
-FROM --platform=$TARGETPLATFORM php:$PHP_VERSION-cli-bullseye as build
+FROM --platform=$BUILDPLATFORM php:$PHP_VERSION-cli-bullseye as build
 
 ARG SWOOLE
 ARG SWOOLE_VERSION

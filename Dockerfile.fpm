@@ -3,7 +3,7 @@ ARG WWWUSER=1000
 ARG WWWGROUP=1000
 ARG TZ=UTC
 
-FROM --platform=$TARGETPLATFORM php:$PHP_VERSION-fpm-bullseye as build
+FROM --platform=$BUILDPLATFORM php:$PHP_VERSION-fpm-bullseye as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
